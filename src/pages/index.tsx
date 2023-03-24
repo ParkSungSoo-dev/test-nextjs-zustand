@@ -1,7 +1,26 @@
 import Head from "next/head";
-import styles from "@/styles/Home.module.css";
+import Link from "next/link";
+import { useState } from "react";
+import TestComp from "@/component/TestComp";
+import useFunctionStore from "@/store/useFunctionStore";
+import useScoreStore from "@/store/useScoreStore";
 
 const Home = () => {
+  const { score, increaseScore } = useScoreStore();
+  const { setFunction } = useFunctionStore();
+  const [numberForInDecrement, setNumberForInDecrement] = useState<number>(0);
+
+  const handleInDecrementClick = (value: number) => {
+    increaseScore(value);
+    setNumberForInDecrement(0);
+  };
+
+  const handleSetFunctionClick = () => {
+    setFunction(() => {
+      console.log(new Date(), "score", score);
+    });
+  };
+
   return (
     <>
       <Head>
@@ -10,7 +29,47 @@ const Home = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className={styles.main}>main</main>
+      <main>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <h2>score: {score}</h2>
+          <div style={{ display: "flex", flexDirection: "row", gap: "5px" }}>
+            Number for increment:
+            <input
+              name="numberForInDecrement"
+              type="number"
+              value={numberForInDecrement}
+              style={{ width: "200px" }}
+              onChange={(e) => setNumberForInDecrement(+e.currentTarget.value)}
+              onWheel={(e) => e.currentTarget.blur()}
+            />
+          </div>
+          <div style={{ display: "flex", flexDirection: "row", gap: "5px" }}>
+            <button
+              name="decreaseNumberBtn"
+              type="button"
+              style={{ width: "200px" }}
+              onClick={() => {
+                handleInDecrementClick(numberForInDecrement * -1);
+              }}>
+              감소하기
+            </button>
+            <button
+              name="increaseNumberBtn"
+              type="button"
+              style={{ width: "200px" }}
+              onClick={() => {
+                handleInDecrementClick(numberForInDecrement);
+              }}>
+              증가하기
+            </button>
+          </div>
+          <Link href="/reset">초기화 페이지로 이동</Link>
+          <button name="setFunctionButton" type="button" style={{ width: "200px" }} onClick={handleSetFunctionClick}>
+            Function 설정
+          </button>
+          <TestComp />
+        </div>
+      </main>
     </>
   );
 };
