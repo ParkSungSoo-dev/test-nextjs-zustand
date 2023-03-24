@@ -1,7 +1,9 @@
 import useFunctionStore from "@/store/useFunctionStore";
 
 const TestComp = () => {
-  const { func, clearFunction } = useFunctionStore();
+  const func = useFunctionStore((state) => state.func);
+  const clearFunction = useFunctionStore((state) => state.clearFunction);
+  // const { func, clearFunction } = useFunctionStore();
   const handleInvokeFunctionClick = () => {
     func?.();
   };
