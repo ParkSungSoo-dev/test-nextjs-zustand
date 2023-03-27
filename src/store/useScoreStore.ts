@@ -16,31 +16,33 @@ interface ScoreStoreInterface {
 const SCORE_INIT_VALUE = 0;
 
 const useScoreStore = create<ScoreStoreInterface>(
-  devtools((set, get) => ({
-    score: SCORE_INIT_VALUE,
-    score2: 2,
-    getScore: () => get().score,
-    increaseScore: (increaseNumber: number) =>
-      set(
-        (state: ScoreStoreInterface) => {
+  devtools(
+    (set, get) => ({
+      score: SCORE_INIT_VALUE,
+      score2: 2,
+      getScore: () => get().score,
+      increaseScore: (increaseNumber: number) =>
+        set(
+          (state: ScoreStoreInterface) => {
+            return {
+              score: state.score + increaseNumber,
+            };
+          },
+          false, // true: 기존 state를 대체, false: 기존 state에 병합
+          "increaseScore", // action type
+        ),
+      resetScore: () => set(() => ({ score: SCORE_INIT_VALUE }), false, "resetScore"),
+      scoreMap: new Map<string, number>(),
+      setScore: (key: string, value: number) => {
+        return set((prev) => {
           return {
-            score: state.score + increaseNumber,
+            scoreMap: new Map(prev.scoreMap).set(key, value),
           };
-        },
-        false, // true: 기존 state를 대체, false: 기존 state에 병합
-        "increaseScore", // action type
-      ),
-    resetScore: () => set(() => ({ score: SCORE_INIT_VALUE }), false, "resetScore"),
-    scoreMap: new Map<string, number>(),
-    setScore: (key: string, value: number) => {
-      return set((prev) => {
-        return {
-          scoreMap: new Map(prev.scoreMap).set(key, value),
-        };
-      });
-    },
-  })),
-  { enabled, name: "ScoreStore" },
+        });
+      },
+    }),
+    { enabled, name: "ScoreStore" },
+  ),
 );
 
 // persist error on SSR

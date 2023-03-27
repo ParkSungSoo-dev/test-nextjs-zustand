@@ -10,12 +10,14 @@ interface FunctionStoreInterface {
 }
 
 const useFunctionStore = create<FunctionStoreInterface>(
-  devtools((set) => ({
-    func: undefined,
-    setFunction: (func: () => void) => set(() => ({ func }), false, "setFunction"),
-    clearFunction: () => set(() => ({ func: undefined }), false, "clearFunction"),
-  })),
-  { enabled, name: "FunctionStore" },
+  devtools(
+    (set) => ({
+      func: undefined,
+      setFunction: (func: () => void) => set(() => ({ func }), false, "setFunction"),
+      clearFunction: () => set(() => ({ func: undefined }), false, "clearFunction"),
+    }),
+    { enabled, name: "FunctionStore" },
+  ),
 );
 
 useFunctionStore.subscribe((state) => console.log(state));
