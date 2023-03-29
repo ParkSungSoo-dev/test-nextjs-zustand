@@ -20,5 +20,5 @@ const useFunctionStore = create<FunctionStoreInterface>()(
   ),
 );
 
-useFunctionStore.subscribe((state) => console.log(state));
+useFunctionStore.subscribe?.((state) => console.log(state));
 export default useFunctionStore;

@@ -57,9 +57,8 @@ export const useScoreStoreWithoutDevTools = create<ScoreStoreInterface>((set, ge
         };
       },
       false, // true: 기존 state를 대체, false: 기존 state에 병합
-      "increaseScore", // action type
     ),
-  resetScore: () => set(() => ({ score: SCORE_INIT_VALUE }), false, "resetScore"),
+  resetScore: () => set(() => ({ score: SCORE_INIT_VALUE }), false),
   scoreMap: new Map<string, number>(),
   setScore: (key: string, value: number) => {
     return set((prev) => {
@@ -73,7 +72,7 @@ export const useScoreStoreWithoutDevTools = create<ScoreStoreInterface>((set, ge
 // persist error on SSR
 //   Error: Text content does not match server-rendered HTML.
 // https://github.com/pmndrs/zustand/issues/1145#issuecomment-1202871214
-const useScorePersistStore = create<ScoreStoreInterface>()(
+export const useScorePersistStore = create<ScoreStoreInterface>()(
   persist(
     (set, get) => ({
       score: SCORE_INIT_VALUE,
@@ -105,9 +104,9 @@ const useScorePersistStore = create<ScoreStoreInterface>()(
   ),
 );
 
-const unsubscribe = useScoreStore.subscribe((state) => console.log(state));
-if (!enabled) {
+const unsubscribe = useScoreStore.subscribe?.((state) => console.log(state));
+if (!enabled && unsubscribe) {
   unsubscribe();
 }
-useScorePersistStore.subscribe((state) => console.log(state));
+
 export default useScoreStore;
