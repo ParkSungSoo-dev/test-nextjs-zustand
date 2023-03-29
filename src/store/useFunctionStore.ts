@@ -4,12 +4,12 @@ import { devtools } from "zustand/middleware";
 const enabled = process.env.NODE_ENV !== "production";
 
 interface FunctionStoreInterface {
-  func: () => void | undefined;
+  func?: () => void;
   setFunction: (func: () => void) => void;
   clearFunction: () => void;
 }
 
-const useFunctionStore = create<FunctionStoreInterface>(
+const useFunctionStore = create<FunctionStoreInterface>()(
   devtools(
     (set) => ({
       func: undefined,

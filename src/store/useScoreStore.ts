@@ -15,7 +15,7 @@ interface ScoreStoreInterface {
 
 const SCORE_INIT_VALUE = 0;
 
-const useScoreStore = create<ScoreStoreInterface>(
+const useScoreStore = create<ScoreStoreInterface>()(
   devtools(
     (set, get) => ({
       score: SCORE_INIT_VALUE,
@@ -45,10 +45,35 @@ const useScoreStore = create<ScoreStoreInterface>(
   ),
 );
 
+export const useScoreStoreWithoutDevTools = create<ScoreStoreInterface>((set, get) => ({
+  score: SCORE_INIT_VALUE,
+  score2: 2,
+  getScore: () => get().score,
+  increaseScore: (increaseNumber: number) =>
+    set(
+      (state: ScoreStoreInterface) => {
+        return {
+          score: state.score + increaseNumber,
+        };
+      },
+      false, // true: 기존 state를 대체, false: 기존 state에 병합
+      "increaseScore", // action type
+    ),
+  resetScore: () => set(() => ({ score: SCORE_INIT_VALUE }), false, "resetScore"),
+  scoreMap: new Map<string, number>(),
+  setScore: (key: string, value: number) => {
+    return set((prev) => {
+      return {
+        scoreMap: new Map(prev.scoreMap).set(key, value),
+      };
+    });
+  },
+}));
+
 // persist error on SSR
 //   Error: Text content does not match server-rendered HTML.
 // https://github.com/pmndrs/zustand/issues/1145#issuecomment-1202871214
-const useScorePersistStore = create<ScoreStoreInterface>(
+const useScorePersistStore = create<ScoreStoreInterface>()(
   persist(
     (set, get) => ({
       score: SCORE_INIT_VALUE,
@@ -62,9 +87,16 @@ const useScorePersistStore = create<ScoreStoreInterface>(
             };
           },
           false, // true: 기존 state를 대체, false: 기존 state에 병합
-          "increaseScorePersist", // action type
         ),
-      resetScore: () => set(() => ({ score: SCORE_INIT_VALUE }), false, "resetScore"),
+      resetScore: () => set(() => ({ score: SCORE_INIT_VALUE }), false),
+      scoreMap: new Map<string, number>(),
+      setScore: (key: string, value: number) => {
+        return set((prev) => {
+          return {
+            scoreMap: new Map(prev.scoreMap).set(key, value),
+          };
+        });
+      },
     }),
     {
       name: "scoreStorage",
